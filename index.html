@@ -1,0 +1,56 @@
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Museo Proyecto</title>
+    <link rel="stylesheet" href="Estilos.css">
+    
+</head>
+<body>
+
+    <div id="encabezado"> 
+        <h1>Museo Metropolitano NY</h1>
+    </div>
+   <br>
+    <form id="form">
+    <div id="filtros">
+        <input type="text" id="plabraclave" placeholder="Palabra calve...">  
+
+        <select name="Departamentos" id="Departamentos"></select>
+
+        <input type="text" id="Localizaciones" placeholder="Localizaciones...">
+
+        <button type="submit" id="buscar">Buscar</button>        
+    </div>
+    </form>
+    <p id="objetos"></p>       
+    <br>
+    <div id="grilla"></div>
+    <div id="paginacion">      
+    </div>
+   <p id="numeroPag"></p>
+
+   <!-- Modal -->
+   <div class="modal fade" id="miModal" tabindex="-1" aria-labelledby="miModalLabel" aria-hidden="true">
+    <div class="modal-dialog-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="miModalLabel">Título del Modal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <img class="modal-content" id="modalImage">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="Script.js"></script>
+    <script src ="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+body {
+    background-color: cadetblue;
+}
+
+#miModal {
+    display: none;
+    position: fixed;
+    text-align: center;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: auto;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+#miModalLabel {
+    text-align: center;
+    padding: 10px;
+}
+
+#grilla {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* Crea columnas dinámicas */
+    gap: 20px;
+    /* Espacio entre los elementos */
+    padding: 20px;
+    z-index: 1;
+}
+
+#plabraclave {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#buscar {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#buscar:hover {
+    background-color: #ddd;
+}
+
+#filtros {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+#filtros select {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#filtros input {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#objetos {
+    text-align: center;
+    font-size: 1.5em;
+
+}
+
+#paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+#paginacion button {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#paginacion button:hover {
+    background-color: #ddd;
+}
+
+#botonPagina {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+#botonPagina:hover {
+    background-color: #ddd;
+}
+
+#numeroPag {
+    text-align: center;
+    padding: 10px;
+}
+
+#encabezado {
+    background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Metropolitan_Museum_of_Art_%28The_Met%29_-_Central_Park%2C_NYC.jpg/1200px-Metropolitan_Museum_of_Art_%28The_Met%29_-_Central_Park%2C_NYC.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    text-decoration-line: underline;
+    text-decoration-style: double;
+    text-decoration-color: white;
+}
+
+.objeto {
+    /* Estilo para los objetos */
+    background-color: #f9f9f9;
+    /* Fondo de los objetos */
+    border: 1px solid #ddd;
+    /* Borde de los objetos */
+    border-radius: 8px;
+    /* Esquinas redondeadas */
+    padding: 10px;
+    text-align: center;
+    /* Centra el texto */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Sombra suave */
+}
+
+.objeto img {
+    max-width: 100%;
+    /* Hace que la imagen se ajuste al contenedor */
+    height: auto;
+    /* Mantiene la proporción de la imagen */
+    border-radius: 4px;
+    /* Esquinas redondeadas de la imagen */
+}
+
+.Titulo {
+    font-size: 1.2em;
+    /* Tamaño de fuente del título */
+    margin: 10px 0 5px;
+    /* Margen entre el título y otros elementos */
+}
+
+.Cultura,
+.Dinastia {
+    font-size: 0.9em;
+    /* Tamaño de fuente más pequeño */
+    color: #555;
+    /* Color más claro para texto secundario */
+}
