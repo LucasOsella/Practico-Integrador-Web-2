@@ -18,9 +18,7 @@ app.use(express.json());
 //     }
 
 // })
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Script.js'));
-});
+
 function traducir(texto, targetLang) {
     return new Promise((resolve, reject) => {
         translate({
