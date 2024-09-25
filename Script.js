@@ -41,8 +41,19 @@ function llenarSelect() {
 }
 llenarSelect();
 
+ function translateText(text, targetLang) {
+  fetch('/traducir', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ text: text, targetLang: targetLang })
+  })
+
+ }
+
 //funcion que obtiene los objestos y arma la pagina
-function fetchObjetos(objectIDs, page = 1) {//Funcion que obtiene los objetos
+ function fetchObjetos(objectIDs, page = 1) {//Funcion que obtiene los objetos
     let objetosHTML = '';
     let objectId = 0;
     lista_objetos = objectIDs;
@@ -81,9 +92,9 @@ function fetchObjetos(objectIDs, page = 1) {//Funcion que obtiene los objetos
 
                 if (data.primaryImageSmall && data.title) {//Verifica si el objeto tiene imagen
                     const img = data.primaryImageSmall || 'Sin imagen.png';
-                    const cultura = data.culture || 'Sin cultura';
-                    const dinastía = data.dynasty || 'Sin dinastía';
-                    const titulo = data.title || 'Sin título';
+                    const cultura =  data.culture || 'Sin cultura' 
+                    const dinastía = data.dynasty || 'Sin dinastía'
+                    const titulo = data.title || 'Sin titulo'
                     if (data.additionalImages.length > 0) {     
                         imgAdicionaes = data.additionalImages[0].url;                   
                         objetosHTML += `
