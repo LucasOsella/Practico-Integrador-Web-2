@@ -19,7 +19,6 @@ app.use(express.json());
 
 // })
 
- 
 function traducir(texto, targetLang) {
     return new Promise((resolve, reject) => {
         translate({
