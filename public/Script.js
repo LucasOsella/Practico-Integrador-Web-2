@@ -41,19 +41,19 @@ function llenarSelect() {
 }
 llenarSelect();
 
- function translateText(text, targetLang) {
-  fetch('/traducir', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ text: text, targetLang: targetLang })
-  })
+function translateText(text, targetLang) {
+    fetch('/traducir', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: text, targetLang: targetLang })
+    })
 
- }
+}
 
 //funcion que obtiene los objestos y arma la pagina
- function fetchObjetos(objectIDs, page = 1) {//Funcion que obtiene los objetos
+function fetchObjetos(objectIDs, page = 1) {//Funcion que obtiene los objetos
     let objetosHTML = '';
     let objectId = 0;
     lista_objetos = objectIDs;
@@ -63,8 +63,8 @@ llenarSelect();
     const endIndex = startIndex + objectsPerPage;
     const pageItems = objectIDs.slice(startIndex, endIndex);
 
-    console.log(pageItems);
-    console.log(lista_objetos.length);
+    console.log("Objetos por pagina",pageItems);
+    console.log("Lista de objetos",lista_objetos.length);
     totalPages = Math.ceil(lista_objetos.length / objectsPerPage);
 
     console.log(`Obteniendo objetos para la página ${page} de ${totalPages}`);
@@ -92,20 +92,18 @@ llenarSelect();
 
                 if (data.primaryImageSmall && data.title) {//Verifica si el objeto tiene imagen
                     const img = data.primaryImageSmall || 'Sin imagen.png';
-                    const cultura =  data.culture || 'Sin cultura' 
+                    const cultura = data.culture || 'Sin cultura'
                     const dinastía = data.dynasty || 'Sin dinastía'
                     const titulo = data.title || 'Sin titulo'
-                    if (data.additionalImages.length > 0) {     
-                        imgAdicionaes = data.additionalImages[0].url;                   
+                    const id= data.objectID;                   
+                    if (data.additionalImages && data.additionalImages.length > 0) {                  
                         objetosHTML += `
                         <div class="objeto"> 
                             <img src="${img}" alt="${titulo}"/> 
                             <h4 class="Titulo">${titulo}</h4>
                             <h4 class="Cultura">Cultura :${cultura}</h4>
                             <h4 class="Dinastia">Dinastía :${dinastía}</h4>
-                          <button type="button" onclick="abrirModal(imgAdicionaes)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#miModal">
-                            Ver Imagens Adicionales
-                            </button> 
+                          <button id="openModalBtn" onclick="abrirModal(${id})">Ver mas imagenes</button>
                         </div>`;
                     } else {
                         objetosHTML += `
@@ -221,14 +219,43 @@ function buscarObjetosFiltrados(departamento, localizacion, palabraclave) {
         });
 }
 
-function abrirModal(imagenAdicional) {
-    console.log(imagenAdicional)
-    document.getElementById('miModal').style.display = 'block';
-    imagenAdicional=document.getElementById("modalImage");  
-    title=document.getElementById("miModalLabel");  
-    title.textContent="Adicionales";
-    imagenAdicional.src=imagenAdicional;
+function abrirModal(idObjeto) {
+    fetch(`${URL_OBJETOS}/${idObjeto}`)
+        .then(response => response.json())
+        .then(data => {
+            const imageContainer = document.getElementById('imageContainer');
+            imageContainer.innerHTML = ''; // Limpiar contenido previo
+            
+            for (let i = 0; i < data.additionalImages.length; i++) {
+                const img = document.createElement('img');
+                img.src = data.additionalImages[i]; // Asignar la fuente de la imagen
+                imageContainer.appendChild(img); // Añadir la imagen al contenedor
+            }
 
-    console.log(imagenAdicional)
-} 
+            // Mostrar el modal
+            const modal = document.getElementById('myModal');
+            modal.style.display = "block";
+        });
+}
 
+// Evento del botón para abrir el modal
+document.getElementById('openModalBtn').onclick = openModal;
+
+// Cerrar el modal cuando se hace clic en (x)
+document.querySelector('.close').onclick = function() {
+    document.getElementById('myModal').style.display = "none";
+}
+
+// Cerrar el modal si se hace clic fuera del contenido
+window.onclick = function(event) {
+    const modal = document.getElementById('myModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}             
+
+
+
+
+    
+    

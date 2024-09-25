@@ -7,7 +7,7 @@ const PORT = 3000;
 
 console.log("hola a desde apps")
 // Servir archivos estáticos
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Enviar el archivo HTML al acceder a la raíz
 app.get('/', (req, res) => {

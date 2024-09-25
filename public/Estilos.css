@@ -2,22 +2,45 @@ body {
     background-color: cadetblue;
 }
 
-#miModal {
+.modal {
     display: none;
+    /* Ocultar el modal por defecto */
     position: fixed;
-    text-align: center;
-    z-index: 1000;
+    z-index: 1;
     left: 0;
     top: 0;
     width: 100%;
-    margin: auto;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    /* Fondo semi-transparente */
 }
 
-#miModalLabel {
-    text-align: center;
-    padding: 10px;
+.modal-content {
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    /* Ancho del modal */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#imageContainer img {
+    max-width: 100%;
+    margin: 10px 0;
 }
 
 #grilla {
