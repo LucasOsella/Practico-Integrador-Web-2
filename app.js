@@ -5,7 +5,7 @@ const { title } = require('process');
 const app = express();
 const PORT = 3000;
 
-
+console.log("hola a desde apps")
 // Servir archivos estáticos
 app.use(express.static(path.join(__dirname)));
 
