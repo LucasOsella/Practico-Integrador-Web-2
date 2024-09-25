@@ -20,7 +20,7 @@ app.use(express.json());
 // })
 
 app.get('/', (req, res) => {
-    res.send('Hola Mundo');
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
  
 
