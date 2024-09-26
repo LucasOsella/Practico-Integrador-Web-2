@@ -193,7 +193,7 @@ form.addEventListener("submit", (e) => {
 //Funcion que filtra los objetos
 function buscarObjetosFiltrados(departamento, localizacion, palabraclave) {
 
-    document.getElementById("Cargando").style.display = "block";
+    
     if (localizacion == 0) {
         localizacion = "";
     } else if (localizacion !== 0) {
@@ -218,6 +218,7 @@ function buscarObjetosFiltrados(departamento, localizacion, palabraclave) {
             } else {
                 console.log("se encontraron " + data.objectIDs.length + " objetos");
                 document.getElementById("objetos").innerHTML = "";
+                document.getElementById("Cargando").style.display = "block";
                 fetchObjetos(data.objectIDs.slice(0, 200));
             }
 
