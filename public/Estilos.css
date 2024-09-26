@@ -64,19 +64,25 @@ body {
     padding: 20px;
     z-index: 1;
 }
-#Cargando{
+
+#Cargando {
     display: none;
     text-align: center;
     font-size: 2em;
     color: white;
     font-weight: bold;
 }
+#Fecha{
+    display: none;
+}
+
 #plabraclave {
     padding: 10px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
+
 
 #buscar {
     padding: 10px;
@@ -136,11 +142,14 @@ body {
 }
 
 #botonPagina {
+    object-fit: contain;
+}
+#openModalBtn{
+    padding: 10px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 4px;
     cursor: pointer;
-    padding: 10px;
 }
 
 #botonPagina:hover {
@@ -163,6 +172,24 @@ body {
     text-decoration-line: underline;
     text-decoration-style: double;
     text-decoration-color: white;
+}
+
+#tooltip {
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    display: none;
+}
+
+button:hover {
+    background-color: #8f94fb; 
+    transform: translateY(-2px); 
+}
+
+button:active {
+    transform: translateY(0); 
 }
 
 .objeto {

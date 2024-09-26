@@ -13,8 +13,9 @@ const ENVIAR = document.getElementById("buscar");
 let currentPage = 1; // Página actual
 const objectsPerPage = 20; // Objetos por página
 let lista_objetos = []; // Lista de objetos
-let imgAdicionaes = [];
-let totalPages=0;
+let imgAdicionaes = [];//Lista de imagenes
+let totalPages=0;//Total de paginas
+const tooltip = document.getElementById('tooltip');//tooltip
 
 
 //Funciones que llena el select de departamentos
@@ -103,10 +104,11 @@ async function fetchObjetos(objectIDs, page = 1) {
             const dinastía = await traducir(data.dynasty || 'Sin dinastía', 'es') ;
             const titulo = await traducir(data.title || 'Sin título', 'es') ;
             const id = data.objectID;
-
+            const fecha=data.objectDate;
             objetosHTML += `
-                <div class="objeto"> 
-                    <img src="${img}" alt="${titulo}"/> 
+                <div class="objeto" > 
+                    <img onmouseover="mostrarFecha(event, '${fecha}')" onmouseout="ocultarFecha()" src="${img}" alt="${titulo}"/> 
+                    <p id="Fecha">${fecha}</p>
                     <h4 class="Titulo">${titulo}</h4>
                     <h4 class="Cultura">Cultura: ${cultura}</h4>
                     <h4 class="Dinastia">Dinastía: ${dinastía}</h4>
@@ -119,7 +121,18 @@ async function fetchObjetos(objectIDs, page = 1) {
 
     document.getElementById("grilla").innerHTML = objetosHTML;//Muestra los objetos
     document.getElementById("Cargando").style.display = "none";
+    
+}
 
+ function mostrarFecha (event, fecha) {
+    tooltip.innerHTML = `Fecha: ${fecha}`;
+    tooltip.style.display = 'block';
+    tooltip.style.left = event.pageX + 'px';
+    tooltip.style.top = event.pageY + 'px';
+
+}
+function ocultarFecha() {
+    tooltip.style.display = 'none';
 }
 //funcion actualizar pagina
 function updatePagina() {
