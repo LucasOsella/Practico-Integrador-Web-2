@@ -1,10 +1,9 @@
 body {
-    background-color: cadetblue;
+    background: linear-gradient(to right, #a0dff9, #70c6e2);
 }
 
 .modal {
     display: none;
-    /* Ocultar el modal por defecto */
     position: fixed;
     z-index: 1;
     left: 0;
@@ -20,7 +19,7 @@ body {
     background-color: #fefefe;
     margin: 10% auto;
     padding: 20px;
-    border: 1px solid #888;
+    border: 1px solid whit;
     width: 50%;
     /* Ancho del modal */
 }
@@ -51,6 +50,7 @@ body {
 }
 
 #imageContainer img {
+    object-fit: contain;
     max-width: 100%;
     margin: 10px 0;
 }
@@ -92,7 +92,7 @@ body {
 }
 
 #buscar:hover {
-    background-color: #ddd;
+    background-color: white;
 }
 
 #filtros {
@@ -104,14 +104,14 @@ body {
 
 #filtros select {
     padding: 10px;
-    background-color: #f9f9f9;
+    background-color: white;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
 
 #filtros input {
     padding: 10px;
-    background-color: #f9f9f9;
+    background-color: white;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
@@ -144,12 +144,17 @@ body {
 #botonPagina {
     object-fit: contain;
 }
+
 #openModalBtn{
     padding: 10px;
-    background-color: #f9f9f9;
+    background-color: #a0dff9;
     border: 1px solid #ddd;
     border-radius: 4px;
     cursor: pointer;
+}
+
+#openModalBtn:hover {
+    background-color: #70c6e2;
 }
 
 #botonPagina:hover {
@@ -170,8 +175,8 @@ body {
     text-align: center;
     color: white;
     text-decoration-line: underline;
-    text-decoration-style: double;
     text-decoration-color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }
 
 #tooltip {
@@ -208,6 +213,7 @@ button:active {
 }
 
 .objeto img {
+    object-fit: contain;
     max-width: 100%;
     /* Hace que la imagen se ajuste al contenedor */
     height: auto;

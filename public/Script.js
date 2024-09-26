@@ -69,7 +69,7 @@ async function fetchObjetos(objectIDs, page = 1) {
     console.log("cantidad de objetos",objectIDs.length)
     totalPages = Math.ceil(objectIDs.length / objectsPerPage);//Total de paginas
     console.log("total de paginas", totalPages)
-    updatePagina();
+    
     console.log(`Obteniendo objetos para la página ${page} de ${totalPages}`);
 
     if (page > totalPages) {
@@ -120,6 +120,7 @@ async function fetchObjetos(objectIDs, page = 1) {
     }
 
     document.getElementById("grilla").innerHTML = objetosHTML;//Muestra los objetos
+    updatePagina();
     document.getElementById("Cargando").style.display = "none";
     
 }
@@ -166,7 +167,6 @@ async function cargarObjetosInicialmente() {
     document.getElementById("Cargando").style.display = "block";
 
     // Llamar a la función para obtener todos los objetos
-    await fetchObjetos(lista_objetos, currentPage);
 }
 cargarObjetosInicialmente();
 
@@ -230,6 +230,7 @@ function buscarObjetosFiltrados(departamento, localizacion, palabraclave) {
                 return
             } else {
                 console.log("se encontraron " + data.objectIDs.length + " objetos");
+                document.getElementById("grilla").innerHTML = "";
                 document.getElementById("objetos").innerHTML = "";
                 document.getElementById("Cargando").style.display = "block";
                 fetchObjetos(data.objectIDs.slice(0, 200));
