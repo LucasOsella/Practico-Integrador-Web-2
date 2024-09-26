@@ -213,6 +213,7 @@ function buscarObjetosFiltrados(departamento, localizacion, palabraclave) {
             if (!data.objectIDs) {
                 console.log("no se encontraron objetos");
                 document.getElementById("objetos").innerHTML = "No se encontraron objetos";
+                document.getElementById("Cargando").style.display = "none";
                 return
             } else {
                 console.log("se encontraron " + data.objectIDs.length + " objetos");
