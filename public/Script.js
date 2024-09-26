@@ -14,7 +14,7 @@ let currentPage = 1; // Página actual
 const objectsPerPage = 20; // Objetos por página
 let lista_objetos = []; // Lista de objetos
 let imgAdicionaes = [];
-
+let totalPages=0;
 
 
 //Funciones que llena el select de departamentos
@@ -41,92 +41,86 @@ function llenarSelect() {
 }
 llenarSelect();
 
-function translateText(text, targetLang) {
-    fetch('/traducir', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: text, targetLang: targetLang })
-    })
-
+async function traducir(text, targetLang) {
+    try {
+        const response = await fetch('/translate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: text, targetLang: targetLang })
+        });
+        const result = await response.json();
+        return result.translatedText;
+    } catch (error) {
+        console.error('Error al traducir el texto:', error);
+        return text; 
+    }
 }
 
-//funcion que obtiene los objestos y arma la pagina
-function fetchObjetos(objectIDs, page = 1) {//Funcion que obtiene los objetos
+async function fetchObjetos(objectIDs, page = 1) {
     let objetosHTML = '';
-    let objectId = 0;
-    lista_objetos = objectIDs;
-
-
+    lista_objetos = objectIDs;//Lista de objetos
     const startIndex = (page - 1) * objectsPerPage;
     const endIndex = startIndex + objectsPerPage;
     const pageItems = objectIDs.slice(startIndex, endIndex);
 
-    console.log("Objetos por pagina",pageItems);
-    console.log("Lista de objetos",lista_objetos.length);
-    totalPages = Math.ceil(lista_objetos.length / objectsPerPage);
-
+    console.log("cantidad de objetos",objectIDs.length)
+    totalPages = Math.ceil(objectIDs.length / objectsPerPage);//Total de paginas
+    console.log("total de paginas", totalPages)
+    updatePagina();
     console.log(`Obteniendo objetos para la página ${page} de ${totalPages}`);
 
-    console.log("obteniendo objetos");
-
     if (page > totalPages) {
-        console.log("No hay mas objetos");
+        console.log("No hay más objetos");
         return;
     }
 
-    for (objectId of pageItems) {//Recorre todos los objetos
-
-        fetch(URL_OBJETOS + '/' + objectId)
-            .then((Response) => {
-                if (!Response.ok) {//Verifica si la respuesta es correcta
-                    if (Response.status == 404) {
-                        console.log('404');
-                        throw new Error(`HTTP error! status: ${Response.status}`);
-                    }
-                } return Response.json()
-            })
-            .then((data) => {//Obtiene los datos
-                // console.log(data.title);
-
-                if (data.primaryImageSmall && data.title) {//Verifica si el objeto tiene imagen
-                    const img = data.primaryImageSmall || 'Sin imagen.png';
-                    const cultura = data.culture || 'Sin cultura'
-                    const dinastía = data.dynasty || 'Sin dinastía'
-                    const titulo = data.title || 'Sin titulo'
-                    const id= data.objectID;                   
-                    if (data.additionalImages && data.additionalImages.length > 0) {                  
-                        objetosHTML += `
-                        <div class="objeto"> 
-                            <img src="${img}" alt="${titulo}"/> 
-                            <h4 class="Titulo">${titulo}</h4>
-                            <h4 class="Cultura">Cultura :${cultura}</h4>
-                            <h4 class="Dinastia">Dinastía :${dinastía}</h4>
-                          <button id="openModalBtn" onclick="abrirModal(${id})">Ver mas imagenes</button>
-                        </div>`;
-                    } else {
-                        objetosHTML += `
-                        <div class="objeto"> 
-                            <img src="${img}" alt="${titulo}"/> 
-                            <h4 class="Titulo">${titulo}</h4>
-                            <h4 class="Cultura">Cultura :${cultura}</h4>
-                            <h4 class="Dinastia">Dinastía :${dinastía}</h4>
-                        </div>`;
-                    }
-
-                    document.getElementById("grilla").innerHTML = objetosHTML;//Muestra los objetos
+    const fetchPromises = pageItems.map(async (objectId) => {//Recorre todos los objetos
+        try {
+            const response = await fetch(`${URL_OBJETOS}/${objectId}`);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    console.log('404');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.log("Hubo un problema al acceder al objeto:", error.message);
+            return null; 
+        }
+    });
 
-            })
-            .catch(error => { // Maneja los errores             
-                console.log("Hubo un problema al acceder al objeto:", error.message);
-            })
+    const fetchedData = await Promise.all(fetchPromises);
+    
+    for (const data of fetchedData) {
+        if (data && data.primaryImageSmall && data.title) {
+            const img = data.primaryImageSmall || 'Sin imagen.png';
+            const cultura = await traducir(data.culture || 'Sin cultura' , 'es');
+            const dinastía = await traducir(data.dynasty || 'Sin dinastía', 'es') ;
+            const titulo = await traducir(data.title || 'Sin título', 'es') ;
+            const id = data.objectID;
+
+            objetosHTML += `
+                <div class="objeto"> 
+                    <img src="${img}" alt="${titulo}"/> 
+                    <h4 class="Titulo">${titulo}</h4>
+                    <h4 class="Cultura">Cultura: ${cultura}</h4>
+                    <h4 class="Dinastia">Dinastía: ${dinastía}</h4>
+                    ${data.additionalImages && data.additionalImages.length > 0 ? 
+                        `<button id="openModalBtn" onclick="abrirModal(${id})">Ver más imágenes</button>` : 
+                        ''}
+                </div>`;
+        }
     }
 
-    updatePagina();
-}
+    document.getElementById("grilla").innerHTML = objetosHTML;//Muestra los objetos
+    document.getElementById("Cargando").style.display = "none";
 
+}
 //funcion actualizar pagina
 function updatePagina() {
     const paginacionControls = document.getElementById("paginacion");
@@ -134,22 +128,34 @@ function updatePagina() {
     paginacionControls.innerHTML = '';
 
     for (let i = 1; i <= totalPages; i++) {
-        paginacionControls.innerHTML += `<button id="botonPagina" onclick="cambiarPagina(${i})">${i}</button>`;
-    }
-    if (totalPages == 1) {
-        numeroPaginas.innerHTML = `Pagina ${currentPage} de ${totalPages}`
-    } else {
-        numeroPaginas.innerHTML = `Pagina ${currentPage} de ${totalPages}`
+        const button = document.createElement('button');
+        button.id = "botonPagina";
+        button.textContent = i;
+        button.addEventListener('click', () => cambiarPagina(i));
+        paginacionControls.appendChild(button);
     }
 
+    numeroPaginas.innerHTML = `Página ${currentPage} de ${totalPages}`;
 }
 
-//funcione cambiar pagina
 function cambiarPagina(newPage) {
-    currentPage = newPage;
-    fetchObjetos(lista_objetos, currentPage)
-
+    if (newPage !== currentPage) {
+        currentPage = newPage;
+        // Mostrar mensaje de "Cargando..."
+        document.getElementById("grilla").innerHTML = "";
+        document.getElementById("Cargando").style.display = "block";
+        fetchObjetos(lista_objetos, currentPage);
+    }
 }
+
+async function cargarObjetosInicialmente() {
+    // Mostrar mensaje de "Cargando..."
+    document.getElementById("Cargando").style.display = "block";
+
+    // Llamar a la función para obtener todos los objetos
+    await fetchObjetos(lista_objetos, currentPage);
+}
+cargarObjetosInicialmente();
 
 //Funcion que obtiene los objetos
 function obtenerObjetosConimgenes() {
@@ -159,6 +165,7 @@ function obtenerObjetosConimgenes() {
             fetchObjetos(data.objectIDs.slice(10, 200));//Llama a la funcion que obtiene los objetos
         })
 }
+
 obtenerObjetosConimgenes();
 
 
@@ -186,7 +193,7 @@ form.addEventListener("submit", (e) => {
 //Funcion que filtra los objetos
 function buscarObjetosFiltrados(departamento, localizacion, palabraclave) {
 
-
+    document.getElementById("Cargando").style.display = "block";
     if (localizacion == 0) {
         localizacion = "";
     } else if (localizacion !== 0) {
@@ -225,7 +232,7 @@ function abrirModal(idObjeto) {
         .then(data => {
             const imageContainer = document.getElementById('imageContainer');
             imageContainer.innerHTML = ''; // Limpiar contenido previo
-            
+
             for (let i = 0; i < data.additionalImages.length; i++) {
                 const img = document.createElement('img');
                 img.src = data.additionalImages[i]; // Asignar la fuente de la imagen
@@ -238,24 +245,26 @@ function abrirModal(idObjeto) {
         });
 }
 
-// Evento del botón para abrir el modal
-document.getElementById('openModalBtn').onclick = openModal;
 
 // Cerrar el modal cuando se hace clic en (x)
-document.querySelector('.close').onclick = function() {
+document.querySelector('.close').onclick = function () {
     document.getElementById('myModal').style.display = "none";
 }
 
 // Cerrar el modal si se hace clic fuera del contenido
-window.onclick = function(event) {
+window.onclick = function (event) {
     const modal = document.getElementById('myModal');
     if (event.target == modal) {
         modal.style.display = "none";
     }
-}             
+}
+
+window.onkeydown = function(event) {
+    if (event.key === "Escape") {
+        document.getElementById('myModal').style.display = "none";
+    }
+};
 
 
 
 
-    
-    

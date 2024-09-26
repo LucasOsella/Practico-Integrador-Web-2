@@ -5,10 +5,30 @@ const { title } = require('process');
 const app = express();
 const PORT = 3000;
 
-console.log("hola a desde apps")
+// Configurar el middleware JSON
+app.use(express.json());
+
+app.post('/translate', (req, res) => {
+    const { text, targetLang } = req.body;
+
+    translate({
+        text: text,
+        source: 'en', 
+        target: targetLang, 
+    }, (result) => {
+        if (result && result.translation) {
+            res.json({ translatedText: result.translation });
+        } else {
+            res.status(500).json({ error: 'Error al traducir el texto' });
+        }
+    });
+});
+
 // Servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
-//hola
+
+
+
 // Enviar el archivo HTML al acceder a la raíz
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -18,3 +38,4 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+

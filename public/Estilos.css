@@ -17,15 +17,27 @@ body {
 }
 
 .modal-content {
+    background-color: #fefefe;
     margin: 10% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    width: 50%;
     /* Ancho del modal */
 }
 
+.modal-content img {
+    object-fit: cover;
+    /* Ajusta la imagen al contenedor */
+    max-width: 50%;
+    /* Hace que la imagen se ajuste al contenedor */
+    height: auto;
+    /* Mantiene la proporción de la imagen */
+    border-radius: 4px;
+    /* Esquinas redondeadas de la imagen */
+}
+
 .close {
-    color: #aaa;
+    color: black;
     float: right;
     font-size: 28px;
     font-weight: bold;
@@ -33,7 +45,7 @@ body {
 
 .close:hover,
 .close:focus {
-    color: white;
+    color: #000;
     text-decoration: none;
     cursor: pointer;
 }
@@ -52,7 +64,13 @@ body {
     padding: 20px;
     z-index: 1;
 }
-
+#Cargando{
+    display: none;
+    text-align: center;
+    font-size: 2em;
+    color: white;
+    font-weight: bold;
+}
 #plabraclave {
     padding: 10px;
     background-color: #f9f9f9;
