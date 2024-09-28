@@ -14,7 +14,7 @@ let currentPage = 1; // Página actual
 const objectsPerPage = 20; // Objetos por página
 let lista_objetos = []; // Lista de objetos
 let imgAdicionaes = [];//Lista de imagenes
-let totalPages=0;//Total de paginas
+let totalPages = 0;//Total de paginas
 const tooltip = document.getElementById('tooltip');//tooltip
 
 
@@ -26,7 +26,7 @@ function llenarSelect() {
             const departamentos = document.getElementById("Departamentos");
             const todoOps = document.createElement("option");
             todoOps.value = 0;
-            todoOps.textContent = "Todos";
+            todoOps.textContent = "Departamentos";
             departamentos.appendChild(todoOps);
 
             data.departments.forEach(departamento => {
@@ -55,7 +55,7 @@ async function traducir(text, targetLang) {
         return result.translatedText;
     } catch (error) {
         console.error('Error al traducir el texto:', error);
-        return text; 
+        return text;
     }
 }
 
@@ -64,20 +64,9 @@ async function fetchObjetos(objectIDs, page = 1) {
     lista_objetos = objectIDs;//Lista de objetos
     const startIndex = (page - 1) * objectsPerPage;
     const endIndex = startIndex + objectsPerPage;
-    const pageItems = objectIDs.slice(startIndex, endIndex);
+    const pageItems = objectIDs.slice(startIndex, endIndex)
 
-    console.log("cantidad de objetos",objectIDs.length)
-    totalPages = Math.ceil(objectIDs.length / objectsPerPage);//Total de paginas
-    console.log("total de paginas", totalPages)
-    
-    console.log(`Obteniendo objetos para la página ${page} de ${totalPages}`);
-
-    if (page > totalPages) {
-        console.log("No hay más objetos");
-        return;
-    }
-
-    const fetchPromises = pageItems.map(async (objectId) => {//Recorre todos los objetos
+    for (const objectId of pageItems) {
         try {
             const response = await fetch(`${URL_OBJETOS}/${objectId}`);
             if (!response.ok) {
@@ -88,44 +77,57 @@ async function fetchObjetos(objectIDs, page = 1) {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            return data;
-        } catch (error) {
-            console.log("Hubo un problema al acceder al objeto:", error.message);
-            return null; 
-        }
-    });
 
-    const fetchedData = await Promise.all(fetchPromises);
-    
-    for (const data of fetchedData) {
-        if (data && data.primaryImageSmall && data.title) {
-            const img = data.primaryImageSmall || 'Sin imagen.png';
-            const cultura = await traducir(data.culture || 'Sin cultura' , 'es');
-            const dinastía = await traducir(data.dynasty || 'Sin dinastía', 'es') ;
-            const titulo = await traducir(data.title || 'Sin título', 'es') ;
-            const id = data.objectID;
-            const fecha=data.objectDate;
-            objetosHTML += `
+            if (data.primaryImageSmall && data.title) {
+                const img = data.primaryImageSmall || 'Sin imagen.png';
+                const cultura = await traducir(data.culture || 'Sin cultura', 'es');
+                const dinastía = await traducir(data.dynasty || 'Sin dinastía', 'es');
+                const titulo = await traducir(data.title || 'Sin título', 'es');
+                const id = data.objectID;
+                const fecha = data.objectDate;
+                objetosHTML += `
                 <div class="objeto" > 
                     <img onmouseover="mostrarFecha(event, '${fecha}')" onmouseout="ocultarFecha()" src="${img}" alt="${titulo}"/> 
                     <p id="Fecha">${fecha}</p>
                     <h4 class="Titulo">${titulo}</h4>
                     <h4 class="Cultura">Cultura: ${cultura}</h4>
                     <h4 class="Dinastia">Dinastía: ${dinastía}</h4>
-                    ${data.additionalImages && data.additionalImages.length > 0 ? 
-                        `<button id="openModalBtn" onclick="abrirModal(${id})">Ver más imágenes</button>` : 
+                    ${data.additionalImages && data.additionalImages.length > 0 ?
+                        `<button id="openModalBtn" onclick="abrirModal(${id})">Ver más imágenes</button>` :
                         ''}
                 </div>`;
+            }
+        } catch (error) {
+            console.error("No se pudo encotrar el objeto",error);
         }
     }
 
-    document.getElementById("grilla").innerHTML = objetosHTML;//Muestra los objetos
-    updatePagina();
+
+    console.log("page items", pageItems.length)
+
+    console.log("cantidad de objetos", objectIDs.length)
+
+    totalPages = Math.ceil(objectIDs.length / objectsPerPage);
+
+
+    //Total de paginas
+    console.log("total de paginas", totalPages)
+
+    console.log(`Obteniendo objetos para la página ${page} de ${totalPages}`);
+
+    if (page > totalPages) {
+        console.log("No hay más objetos");
+        return;
+    }
+
+    document.getElementById("grilla").innerHTML = objetosHTML;//Muestra los objetos en la grilla
     document.getElementById("Cargando").style.display = "none";
-    
+    updatePagina();
 }
 
- function mostrarFecha (event, fecha) {
+
+
+function mostrarFecha(event, fecha) {
     tooltip.innerHTML = `Fecha: ${fecha}`;
     tooltip.style.display = 'block';
     tooltip.style.left = event.pageX + 'px';
@@ -142,15 +144,16 @@ function updatePagina() {
     paginacionControls.innerHTML = '';
 
     for (let i = 1; i <= totalPages; i++) {
-        const button = document.createElement('button');
-        button.id = "botonPagina";
-        button.textContent = i;
-        button.addEventListener('click', () => cambiarPagina(i));
-        paginacionControls.appendChild(button);
+        paginacionControls.innerHTML += `<button id="botonPagina" onclick="cambiarPagina(${i})">${i}</button>`;
+    }
+    if (totalPages == 1) {
+        numeroPaginas.innerHTML = `Pagina ${currentPage} de ${totalPages}`
+    } else {
+        numeroPaginas.innerHTML = `Pagina ${currentPage} de ${totalPages}`
     }
 
-    numeroPaginas.innerHTML = `Página ${currentPage} de ${totalPages}`;
 }
+
 
 function cambiarPagina(newPage) {
     if (newPage !== currentPage) {
@@ -175,12 +178,25 @@ function obtenerObjetosConimgenes() {
     fetch(URL_HAS_IMAGES)//Obtiene todos los objetos
         .then(Response => Response.json())
         .then((data) => {
-            fetchObjetos(data.objectIDs.slice(10, 200));//Llama a la funcion que obtiene los objetos
+            fetchObjetos(data.objectIDs.slice(10, 70));//Llama a la funcion que obtiene los objetos
         })
 }
 
 obtenerObjetosConimgenes();
 
+form.addEventListener("reset", (e) => {
+    console.log("Reiniciando los filtros");
+    e.preventDefault();
+    DEPARTAMENTOS.value = 0;
+    LOCALIZACIONES.value = "";
+    PALABRACLAVE.value = "";
+    document.getElementById("grilla").innerHTML = "";
+    document.getElementById("paginacion").innerHTML = "";
+     document.getElementById("numeroPag").innerHTML = "";
+     document.getElementById("objetos").innerHTML = "";
+     document.getElementById("Cargando").style.display = "block";
+    obtenerObjetosConimgenes();
+})
 
 //Funcion que obtiene los filtros
 form.addEventListener("submit", (e) => {
@@ -206,7 +222,6 @@ form.addEventListener("submit", (e) => {
 //Funcion que filtra los objetos
 function buscarObjetosFiltrados(departamento, localizacion, palabraclave) {
 
-    
     if (localizacion == 0) {
         localizacion = "";
     } else if (localizacion !== 0) {
@@ -218,9 +233,10 @@ function buscarObjetosFiltrados(departamento, localizacion, palabraclave) {
         departamento = "&departmentId=" + departamento
     }
 
-    console.log(URL_SEARCH + "?&q=" + palabraclave + departamento + localizacion)
+    console.log(URL_SEARCH + "?hasImages=true" + "&q=" + palabraclave + departamento + localizacion)
 
-    fetch(URL_SEARCH + "?q=" + palabraclave + departamento + localizacion)
+    fetch(URL_SEARCH + "?hasImages=true&q=" + palabraclave + departamento + localizacion)
+
         .then(Response => Response.json())
         .then((data) => {
             if (!data.objectIDs) {
@@ -229,11 +245,14 @@ function buscarObjetosFiltrados(departamento, localizacion, palabraclave) {
                 document.getElementById("Cargando").style.display = "none";
                 return
             } else {
+                document.getElementById("paginacion").innerHTML = "";
+                document.getElementById("numeroPag").innerHTML = "";
                 console.log("se encontraron " + data.objectIDs.length + " objetos");
                 document.getElementById("grilla").innerHTML = "";
                 document.getElementById("objetos").innerHTML = "";
                 document.getElementById("Cargando").style.display = "block";
-                fetchObjetos(data.objectIDs.slice(0, 200));
+                fetchObjetos(data.objectIDs.slice(0, 200), currentPage);
+
             }
 
         })
@@ -275,7 +294,7 @@ window.onclick = function (event) {
     }
 }
 
-window.onkeydown = function(event) {
+window.onkeydown = function (event) {
     if (event.key === "Escape") {
         document.getElementById('myModal').style.display = "none";
     }
